@@ -9,6 +9,7 @@ import Footer from './Footer';
 function App() {
   const [recherche, setRecherche] = useState("");
   const [ligneSelectionnee, setLigneSelectionnee] = useState(null);
+  const [nbRecherches, setNbRecherches] = useState(0); // ← nouveau
   const lignes = [
     { id: 1, numero: "1", depart: "Parcelles Assainies",
       arrivee: "Plateau", arrets: 14,
@@ -53,17 +54,34 @@ function handleClickLigne(ligne) {
   setLigneSelectionnee(ligne); // premier clic = selectionner
    }
 }
+// Fonction intermédiaire pour gérer le changement du champ
+function handleRecherche(valeur) {
+  setRecherche(valeur);
+  setNbRecherches(n => n + 1); // ← incrémentation
+}
+
   return (
     <div className="App">
       <Header />
       <main className="contenu">
-        <Recherche valeur={recherche} 
-                   onChange={setRecherche} />
+        {/* Compteur affiché en haut */}
+        <p className="compteur-recherches">
+          Vous avez effectué {nbRecherches} recherche{nbRecherches > 1 ? 's' : ''}
+        </p>
+
+        <Recherche valeur={recherche} onChange={handleRecherche} /> {/* ← handleRecherche */}
+        
+        
         <p className="resultat-recherche">
          {lignesFiltrees.length} ligne
          {lignesFiltrees.length > 1 ? 's' : ''} trouvee
          {lignesFiltrees.length > 1 ? 's' : ''}
         </p>
+        {lignesFiltrees.length === 0 && (
+           <p className="aucun-resultat">
+             Aucune ligne trouvée pour « {recherche} »
+           </p>
+       )}
         {lignesFiltrees.map(ligne => (
          <LigneBus
            key={ligne.id}
